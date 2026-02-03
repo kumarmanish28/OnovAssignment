@@ -40,8 +40,8 @@ class CharacterAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(character: Character) {
 
-            binding.characterName.text = character.name
-            binding.characterSpecies.text = "${character.species} • ${character.status}"
+            binding.characterName.text = character.name?:"-"
+            binding.characterSpecies.text = "${character.species?:"-"} • ${character.status?:"-"}"
 
             Glide.with(itemView.context)
                 .load(character.image)

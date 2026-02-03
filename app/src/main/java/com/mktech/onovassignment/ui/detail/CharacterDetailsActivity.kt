@@ -13,15 +13,17 @@ import com.bumptech.glide.Glide
 import com.mktech.onovassignment.R
 import com.mktech.onovassignment.databinding.ActivityCharachterDetailsBinding
 import com.mktech.onovassignment.util.ResultState
+import com.mktech.onovassignment.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class CharacterDetailsActivity : AppCompatActivity() {
     private val viewModel: CharacterDetailViewModel by viewModels()
 
     private lateinit var binding: ActivityCharachterDetailsBinding
-
+    private var characterId : Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,7 @@ class CharacterDetailsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val characterId = intent.getIntExtra("character_id", -1)
+        characterId = intent.getIntExtra("character_id", -1)
 
         observeData()
 
@@ -55,11 +57,11 @@ class CharacterDetailsActivity : AppCompatActivity() {
                         binding.progressBar.visibility = View.GONE
                         val character = state.data
 
-                        binding.nameTv.text = character.name
-                        binding.statusTv.text = character.status
-                        binding.speciesTv.text = character.species
-                        binding.genderTv.text = character.gender
-                        binding.locationTv.text = character.location.name
+                        binding.nameTv.text = character.name?:"-"
+                        binding.statusTv.text = character.status?:"-"
+                        binding.speciesTv.text = character.species?:"-"
+                        binding.genderTv.text = character.gender?:"-"
+                        binding.locationTv.text = character.location.name?:"-"
 
                         Glide.with(this@CharacterDetailsActivity)
                             .load(character.image)
@@ -68,11 +70,15 @@ class CharacterDetailsActivity : AppCompatActivity() {
 
                     is ResultState.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(
+                        Utility.showErrorDialog(
                             this@CharacterDetailsActivity,
-                            state.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Error",
+                            state.message
+                        ) {
+                            if (characterId != -1) {
+                                viewModel.fetchCharacterDetails(characterId)
+                            }
+                        }
                     }
                 }
             }

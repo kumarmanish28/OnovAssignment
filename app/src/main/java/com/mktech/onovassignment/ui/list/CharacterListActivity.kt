@@ -15,6 +15,7 @@ import com.mktech.onovassignment.R
 import com.mktech.onovassignment.databinding.ActivityCharacterListBinding
 import com.mktech.onovassignment.ui.detail.CharacterDetailsActivity
 import com.mktech.onovassignment.util.ResultState
+import com.mktech.onovassignment.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -63,11 +64,9 @@ class CharacterListActivity : AppCompatActivity() {
 
                     is ResultState.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(
-                            this@CharacterListActivity,
-                            state.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Utility.showErrorDialog(this@CharacterListActivity, "Error", state.message){
+                            viewModel.fetchCharacters()
+                        }
                     }
                 }
             }

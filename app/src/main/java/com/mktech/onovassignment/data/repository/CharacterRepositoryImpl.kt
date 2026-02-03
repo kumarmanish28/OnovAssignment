@@ -2,6 +2,7 @@ package com.mktech.onovassignment.data.repository
 
 import com.mktech.onovassignment.data.api.ApiService
 import com.mktech.onovassignment.util.ResultState
+import com.mktech.onovassignment.util.Utility.toUserMessage
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -15,7 +16,7 @@ class CharacterRepositoryImpl @Inject constructor(
             val response = api.getCharacters()
             emit(ResultState.Success(response.results))
         } catch (e: Exception) {
-            emit(ResultState.Error(e.message ?: "Something went wrong"))
+            emit(ResultState.Error(e.toUserMessage()))
         }
     }
 
@@ -25,7 +26,7 @@ class CharacterRepositoryImpl @Inject constructor(
             val response = api.getCharacterDetail(id)
             emit(ResultState.Success(response))
         } catch (e: Exception) {
-            emit(ResultState.Error(e.message ?: "Something went wrong"))
+            emit(ResultState.Error(e.toUserMessage()))
         }
     }
 }
